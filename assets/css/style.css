@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+    color: white;
+    background-color: blue;
+    background-image: linear-gradient(to right, #3e3eff, #3d0076);
+    padding: 0.5px;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cityInput {
+    width: 25%;
+    display: block;
+}
+
+.cityInput input {
+    width: 96%;
+    height: 30px;
+    padding: 0% 0% 0% 2%;
+    border-radius: 5px;
+    font-size: large;
+}
+
+.cityInput button {
+    width: 100%;
+    background-color: #93f673;
+    margin: 4% 8% 8% 0%;
+    padding: 2%;
+    border-radius: 5px;
+}
+
+.history {
+    width: 25%;
+}
+
+.currentStatus {
+    width: 60%;
+    margin: 1% 0% 0% 2%;
+    padding: 1% 0% 0% 2%;
+    border: solid black 1px;
+}
+
+.fiveDayStatus {
+    width: 60%;
+    padding-left: 5%;
+}
