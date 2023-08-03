@@ -69,3 +69,20 @@ header {
     width: 60%;
     padding-left: 5%;
 }
+
+/* Add these new styles for the five-day forecast boxes */
+.box {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    width: calc(20% - 10px); /* Each box takes 20% width of the parent container with 10px margin on each side */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
+/* Add a new CSS class to wrap the five-day forecast boxes */
+.fiveDayStatusContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
