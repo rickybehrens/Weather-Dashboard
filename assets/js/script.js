@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 infoDiv.appendChild(temperaturePara);
 
                 var windDirection = parseFloat(result.list[0].wind.deg)
-                if (11.25 <= windDirection && windDirection < 33.75){
+                if (11.25 <= windDirection && windDirection < 33.75) {
                     windDirection = ' NNE';
                 } else if (33.75 <= windDirection && windDirection < 56.25) {
                     windDirection = ' NE';
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     windDirection = ' N'
                 }
-                
+
                 // Wind speed comes originally in m/s. Turned it into a number so it could be converted to MPH, then rounded to 1 decimal
                 var windSpeed = parseFloat(result.list[0].wind.speed);
                 var convertedWindSpeed = windSpeed * 2.237
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log('error', error);
                 // If the city is not found, display message
                 var currentStatusElement = document.querySelector(".currentStatus");
-                currentStatusElement.textContent = "<h1>We are so sorry!!! City not found</h1>";
+                currentStatusElement.textContent = "We are so sorry!!! City not found";
             });
     }
 
@@ -169,6 +169,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var dayDiv = document.createElement("div");
             dayDiv.className = "box";
 
+            var fullDate = result.list[i].dt_txt
+            console.log(fullDate)
+
             var tempMax = parseFloat(result.list[i].main.temp_max);
             var convertedTempMax = (tempMax - 273.15) * 9 / 5 + 32;
             var roundedTempMax = convertedTempMax.toFixed(1);
@@ -185,6 +188,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var windDirectionText = getWindDirectionText(windDirection);
 
             var humidity = result.list[i].main.humidity;
+
+
 
             var tempPara = document.createElement("p");
             tempPara.textContent = "Temperature (Hi/Lo): " + roundedTempMax + "° F" + " / " + roundedTempMin + "° F";
