@@ -190,24 +190,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Rearrange the parts to the desired format (this only took about a day to figure out...)
                     var newString = `${parts[1]}/${parts[2]}/${parts[0]}`;
-                    console.log(newString);
 
-                    // Now let's log element.main.temp along with the date
-                    console.log(newString + " - Temperature: " + element.main.temp);
+                    // Calculate the day of the month for the current date
+                    var dayOfMonth = parseInt(parts[2]);
+                    var tomorrowDay = parseFloat(dayjs().format('DD')) + 1
+                    
+                    // Check if newString is equal to today's date
+                    if (dayOfMonth < tomorrowDay) {
+                        continue; // Skip this iteration
+                    }
 
-                    //     var timestamp = element.dt;
-                    //     var dateObj = dayjs(date);
-                    //     var tomorrowDay = parseFloat(dayjs().format('DD')) + 1
-                    //     var endDate = tomorrowDay + 4
-
-
-                    //     // Calculate the day of the month for the current date
-                    //     var dayOfMonth = parseFloat(dateObj.format('DD'));
-
-                    //     if (dayOfMonth >= tomorrowDay && dayOfMonth <= endDate) {
-                    //         // Log the temperature for tomorrow and the dates within the range
-                    //         console.log(date);
-                    //     }
+                    console.log(newString)
+                    console.log("Temperature (High): " + element.main.temp_max);
+                    console.log("Temperature (Low): " + element.main.temp_min);
+                    console.log("Wind Speed: " + element.wind.speed + " MPH");
+                    console.log("Wind Direction: " + (element.wind.deg));
+                    console.log("Humidity: " + element.main.humidity + " %");
                 }
 
             })
