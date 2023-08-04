@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         var cityName = document.getElementById('citySearch').value;
-        var newUrl = 'https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e';
+        var currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e';
 
-        fetch(newUrl, requestOptions)
+        fetch(currentUrl, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     if (response.status === 404) {
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 var formattedToday = today.format('dddd, MMM DD YYYY');
 
                 // Set the content of the h1 element to the city name and formatted today
-                h1Element.textContent = result.city.name + ' (' + formattedToday + ')';
+                h1Element.textContent = result.name + ' (' + formattedToday + ')';
 
                 // Clear the .currentStatus element before adding the new content
                 currentStatusElement.textContent = "";
@@ -49,11 +49,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 var infoDiv = document.createElement("div");
 
                 // Temperature comes originally in degrees Kelvin. Turned it into a number so it could be converted to °F, then rounded to 1 decimal
-                var tempHigh = parseFloat(result.list[0].main.temp_max);
+                var tempHigh = parseFloat(result.main.temp_max);
                 var convertedTempHigh = (tempHigh - 273.15) * 9 / 5 + 32;
                 var roundedTempHigh = convertedTempHigh.toFixed(1);
 
-                var tempLow = parseFloat(result.list[0].main.temp_min);
+                var tempLow = parseFloat(result.main.temp_min);
                 var convertedTempLow = (tempLow - 273.15) * 9 / 5 + 32;
                 var roundedTempLow = convertedTempLow.toFixed(1);
 
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 temperaturePara.textContent = "Temperature (Hi/Lo): " + roundedTempHigh + "° F" + " / " + roundedTempLow + "° F";
                 infoDiv.appendChild(temperaturePara);
 
-                var windDirection = parseFloat(result.list[0].wind.deg)
+                var windDirection = parseFloat(result.wind.deg)
                 if (11.25 <= windDirection && windDirection < 33.75) {
                     windDirection = ' NNE';
                 } else if (33.75 <= windDirection && windDirection < 56.25) {
@@ -97,14 +97,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // Wind speed comes originally in m/s. Turned it into a number so it could be converted to MPH, then rounded to 1 decimal
-                var windSpeed = parseFloat(result.list[0].wind.speed);
+                var windSpeed = parseFloat(result.wind.speed);
                 var convertedWindSpeed = windSpeed * 2.237
                 var roundedWindSpeed = convertedWindSpeed.toFixed(1)
                 var windPara = document.createElement("p");
                 windPara.textContent = "Wind Speed: " + roundedWindSpeed + " MPH" + windDirection;
                 infoDiv.appendChild(windPara);
 
-                var humidity = result.list[0].main.humidity;
+                var humidity = result.main.humidity;
                 var humidityPara = document.createElement("p");
                 humidityPara.textContent = "Humidity: " + humidity + " %";
                 infoDiv.appendChild(humidityPara);
@@ -114,8 +114,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Store the city name in localStorage
                 storeCity(cityName);
-                handleFiveDayStatus(result); // Call the new function to display the five-day forecast
+                handleFiveDayStatus(result.name); // Call the new function to display the five-day forecast
             })
+
             .catch(error => {
                 console.log('error', error);
                 // If the city is not found, display message
@@ -157,60 +158,66 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Function to display the five-day forecast
-    function handleFiveDayStatus(result) {
-        var fiveDayStatusElement = document.querySelector(".fiveDayStatus");
-        fiveDayStatusElement.textContent = ""; // Clear the current content of .fiveDayStatus
+    function handleFiveDayStatus(cityName) {
 
-        var h3Element = document.createElement("h3");
-        h3Element.textContent = "Five-day Forecast";
-        fiveDayStatusElement.appendChild(h3Element);
+        var requestOptionsForecast = {
+            method: 'GET',
+            redirect: 'follow'
+        };
 
-        for (let i = 1; i <= 5; i++) {
-            var dayDiv = document.createElement("div");
-            dayDiv.className = "box";
+        var forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e'
 
-            var fullDate = result.list[i].dt_txt
-            console.log(fullDate)
+        fetch(forecastUrl, requestOptionsForecast)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error fetching forecast data");
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log(result)
 
-            var tempMax = parseFloat(result.list[i].main.temp_max);
-            var convertedTempMax = (tempMax - 273.15) * 9 / 5 + 32;
-            var roundedTempMax = convertedTempMax.toFixed(1);
+                dayjs.extend(window.dayjs_plugin_isSameOrBefore);
 
-            var tempMin = parseFloat(result.list[i].main.temp_min);
-            var convertedTempMin = (tempMin - 273.15) * 9 / 5 + 32;
-            var roundedTempMin = convertedTempMin.toFixed(1);
+                // Calculate tomorrow's date and the date for "tomorrow + 5 days"
 
-            var windSpeed = parseFloat(result.list[i].wind.speed);
-            var convertedWindSpeed = windSpeed * 2.237;
-            var roundedWindSpeed = convertedWindSpeed.toFixed(1);
+                for (let i = 0; i < result.list.length; i++) {
+                    const element = result.list[i];
 
-            var windDirection = parseFloat(result.list[i].wind.deg);
-            var windDirectionText = getWindDirectionText(windDirection);
+                    var originalString = element.dt_txt;
+                    // Split the string by the '-' and ' ' characters
+                    var parts = originalString.split(/-|\s/);
 
-            var humidity = result.list[i].main.humidity;
+                    // Rearrange the parts to the desired format (this only took about a day to figure out...)
+                    var newString = `${parts[1]}/${parts[2]}/${parts[0]}`;
+                    console.log(newString);
+
+                    // Now let's log element.main.temp along with the date
+                    console.log(newString + " - Temperature: " + element.main.temp);
+
+                    //     var timestamp = element.dt;
+                    //     var dateObj = dayjs(date);
+                    //     var tomorrowDay = parseFloat(dayjs().format('DD')) + 1
+                    //     var endDate = tomorrowDay + 4
 
 
+                    //     // Calculate the day of the month for the current date
+                    //     var dayOfMonth = parseFloat(dateObj.format('DD'));
 
-            var tempPara = document.createElement("p");
-            tempPara.textContent = "Temperature (Hi/Lo): " + roundedTempMax + "° F" + " / " + roundedTempMin + "° F";
+                    //     if (dayOfMonth >= tomorrowDay && dayOfMonth <= endDate) {
+                    //         // Log the temperature for tomorrow and the dates within the range
+                    //         console.log(date);
+                    //     }
+                }
 
-            var windPara = document.createElement("p");
-            windPara.textContent = "Wind Speed: " + roundedWindSpeed + " MPH" + windDirectionText;
+            })
+            .catch(error => {
+                console.log('error', error);
+                // If there's an error fetching forecast data, display an error message
+                var fiveDayStatusElement = document.querySelector(".fiveDayStatus");
+                fiveDayStatusElement.textContent = "Error fetching forecast data";
+            });
 
-            var humidityPara = document.createElement("p");
-            humidityPara.textContent = "Humidity: " + humidity + " %";
-
-            dayDiv.appendChild(tempPara);
-            dayDiv.appendChild(windPara);
-            dayDiv.appendChild(humidityPara);
-
-            fiveDayStatusElement.appendChild(dayDiv);
-        }
-    }
-
-    // Function to get the wind direction in text based on the wind degree
-    function getWindDirectionText(degrees) {
-        // ... (your existing wind direction code, omitted for brevity)
     }
 
     // Function to display the stored cities in the .history element
