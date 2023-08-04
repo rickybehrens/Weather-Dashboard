@@ -160,6 +160,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to display the five-day forecast
     function handleFiveDayStatus(cityName) {
 
+        var tempHighArrays = [];
+        var tempLowArrays = [];
+        var windSpeedArrays = [];
+        var humidityArrays = [];
+
         var requestOptionsForecast = {
             method: 'GET',
             redirect: 'follow'
@@ -177,10 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(result => {
                 console.log(result)
 
-                dayjs.extend(window.dayjs_plugin_isSameOrBefore);
-
-                // Calculate tomorrow's date and the date for "tomorrow + 5 days"
-
                 for (let i = 0; i < result.list.length; i++) {
                     const element = result.list[i];
 
@@ -191,30 +192,107 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Rearrange the parts to the desired format (this only took about a day to figure out...)
                     var newString = `${parts[1]}/${parts[2]}/${parts[0]}`;
 
+
                     // Calculate the day of the month for the current date
                     var dayOfMonth = parseInt(parts[2]);
                     var tomorrowDay = parseFloat(dayjs().format('DD')) + 1
-                    
+                    var tomorrow = `${parts[1]}/` + tomorrowDay + `/${parts[0]}`
+
                     // Check if newString is equal to today's date
                     if (dayOfMonth < tomorrowDay) {
                         continue; // Skip this iteration
                     }
 
-                    console.log(newString)
-                    console.log("Temperature (High): " + element.main.temp_max);
-                    console.log("Temperature (Low): " + element.main.temp_min);
-                    console.log("Wind Speed: " + element.wind.speed + " MPH");
-                    console.log("Wind Direction: " + (element.wind.deg));
-                    console.log("Humidity: " + element.main.humidity + " %");
+                    // Store the temperature value in the corresponding chunk array
+                    var chunkIndex = Math.floor(i / 8); // Calculate the index of the chunk array
+                    if (!tempHighArrays[chunkIndex]) {
+                        tempHighArrays[chunkIndex] = []; // Initialize the chunk array if it doesn't exist
+                    }
+                    tempHighArrays[chunkIndex].push(element.main.temp_max);
+
+                    // Store the temperature value in the corresponding chunk array
+                    var chunkIndex = Math.floor(i / 8); // Calculate the index of the chunk array
+                    if (!tempLowArrays[chunkIndex]) {
+                        tempLowArrays[chunkIndex] = []; // Initialize the chunk array if it doesn't exist
+                    }
+                    tempLowArrays[chunkIndex].push(element.main.temp_min);
+
+                    // Store the wind speed value in the corresponding chunk array
+                    var chunkIndex = Math.floor(i / 8); // Calculate the index of the chunk array
+                    if (!windSpeedArrays[chunkIndex]) {
+                        windSpeedArrays[chunkIndex] = []; // Initialize the chunk array if it doesn't exist
+                    }
+                    windSpeedArrays[chunkIndex].push(element.wind.speed);
+
+                    // Store the humidity value in the corresponding chunk array
+                    var chunkIndex = Math.floor(i / 8); // Calculate the index of the chunk array
+                    if (!humidityArrays[chunkIndex]) {
+                        humidityArrays[chunkIndex] = []; // Initialize the chunk array if it doesn't exist
+                    }
+                    humidityArrays[chunkIndex].push(element.main.humidity);
                 }
 
+                // Sort each chunk in the tempHighArrays array in descending order
+                tempHighArrays.forEach(chunk => {
+                    chunk.sort((a, b) => b - a);
+                });
+                // Keep only the highest value in each chunk and remove the other elements
+                tempHighArrays.forEach(chunk => {
+                    if (chunk.length > 1) {
+                        chunk.splice(1); // Remove elements after the first one (keep only the highest value)
+                    }
+                });
+
+                // Sort each chunk in the tempHighArrays array in descending order
+                tempLowArrays.forEach(chunk => {
+                    chunk.sort((a, b) => a - b);
+                });
+                // Keep only the highest value in each chunk and remove the other elements
+                tempLowArrays.forEach(chunk => {
+                    if (chunk.length > 1) {
+                        chunk.splice(1); // Remove elements after the first one (keep only the highest value)
+                    }
+                });
+
+                // Sort each chunk in the windSpeedArrays array in descending order
+                windSpeedArrays.forEach(chunk => {
+                    chunk.sort((a, b) => b - a);
+                });
+                // Keep only the highest value in each chunk and remove the other elements
+                windSpeedArrays.forEach(chunk => {
+                    if (chunk.length > 1) {
+                        chunk.splice(1); // Remove elements after the first one (keep only the highest value)
+                    }
+                });
+
+                // Sort each chunk in the humiditydArrays array in descending order
+                humidityArrays.forEach(chunk => {
+                    chunk.sort((a, b) => b - a);
+                });
+                // Keep only the highest value in each chunk and remove the other elements
+                humidityArrays.forEach(chunk => {
+                    if (chunk.length > 1) {
+                        chunk.splice(1); // Remove elements after the first one (keep only the highest value)
+                    }
+                });
+
+                var day1 = [today.add(1, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "/" + ((tempLowArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", (windSpeedArrays[0][0] * 2.237).toFixed(0) + " MPH", humidityArrays[0][0] + "%"];
+
+                var day2 = [today.add(2, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "/" + ((tempLowArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", (windSpeedArrays[1][0] * 2.237).toFixed(0) + " MPH", humidityArrays[1][0] + "%"];
+
+                var day3 = [today.add(3, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "/" + ((tempLowArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", (windSpeedArrays[2][0] * 2.237).toFixed(0) + " MPH", humidityArrays[2][0] + "%"];
+
+                var day4 = [today.add(4, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[3][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "/" + ((tempLowArrays[3][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", (windSpeedArrays[3][0] * 2.237).toFixed(0) + " MPH", humidityArrays[3][0] + "%"];
+
+                var day5 = [today.add(5, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "/" + ((tempLowArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", (windSpeedArrays[4][0] * 2.237).toFixed(0) + " MPH", humidityArrays[4][0] + "%"];                
             })
+
             .catch(error => {
                 console.log('error', error);
                 // If there's an error fetching forecast data, display an error message
                 var fiveDayStatusElement = document.querySelector(".fiveDayStatus");
                 fiveDayStatusElement.textContent = "Error fetching forecast data";
-            });
+            })
 
     }
 
