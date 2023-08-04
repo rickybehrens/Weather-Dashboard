@@ -65,15 +65,10 @@ header {
 }
 
 .currentStatus {
-    width: 60%;
+    width: 66.6666%;
     margin: 1% 0% 0% 2%;
     padding: 1% 0% 0% 2%;
     border: solid black 1px;
-}
-
-.fiveDayStatus {
-    width: 60%;
-    padding-left: 5%;
 }
 
 /* Add these new styles for the five-day forecast boxes */
@@ -86,15 +81,35 @@ header {
     box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 
-/* Add a new CSS class to wrap the five-day forecast boxes */
+/* Style for the container holding the "5-Day Forecast" message */
 .fiveDayStatusContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    text-align: center; /* Center the "5-Day Forecast" message */
+    margin-bottom: 20px; /* Add some space between the message and the forecast boxes */
 }
 
-/* Modify the width of the .fiveDayStatusContainer to take the whole width of the .fiveDayStatus element */
-.fiveDayStatus .fiveDayStatusContainer {
-    width: 100%;
-    display: block;
+.forecastContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Align boxes side-by-side with space between */
+    width: 60%; /* Set maximum width to avoid exceeding .currentStatus width */
+    margin: auto; /* Center the container horizontally */
 }
+
+.forecastContainer .box {
+    margin: 4px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Include padding and borders within the width calculation */
+}
+
+  
+  /* Style for each individual forecast box */
+  .forecastContainer > div {
+    flex: 0 0 calc(20% - 20px); /* Adjust the width of the forecast boxes as needed */
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Include padding and borders within the width calculation */
+  }
+  
