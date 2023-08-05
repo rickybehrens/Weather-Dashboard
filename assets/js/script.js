@@ -23,8 +23,31 @@ function lookUp() {
             return response.json();
         })
         .then(result => {
+
+            // if (temperature > 293) { // For example, change the background color if the temperature is above 20 degrees Celsius (293 Kelvin)
+            //     currentStatusElement.style.backgroundColor = "yellow";
+            // } else {
+            //     currentStatusElement.style.backgroundColor = "lightblue";
+            // }
+
             // Get the .currentStatus element
             var currentStatusElement = document.querySelector(".currentStatus");
+
+            console.log(result.weather[0].main) // Debuggin
+
+            if (result.weather[0].main === 'Clear') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Sunny.jpeg')";
+            } else if (result.weather[0].main === 'Clouds') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Cloudy.jpeg')";
+            } else if (result.weather[0].main === 'Rain') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Rainy.jpeg')";
+            } else if (result.weather[0].main === 'Snow') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Snowy.jpeg')";
+            } else if (result.weather[0].main === 'Wind') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Windy.jpeg')";
+            } else if (result.weather[0].main === 'Smoke') {
+                currentStatusElement.style.backgroundImage = "url('./assets/images/Smoky.jpeg')";
+            }
 
             // Create an h1 element
             var h1Element = document.createElement("h1");
@@ -118,6 +141,7 @@ function lookUp() {
             var currentStatusElement = document.querySelector(".currentStatus");
             currentStatusElement.textContent = "We are so sorry!!! City not found";
         });
+
 }
 
 // Function to store city name in localStorage
@@ -175,8 +199,11 @@ function handleFiveDayStatus(cityName) {
             return response.json();
         })
         .then(result => {
+
             for (let i = 0; i < result.list.length; i++) {
                 const element = result.list[i];
+
+                console.log(element.weather[0].main) // Debuggind
 
                 var originalString = element.dt_txt;
                 // Split the string by the '-' and ' ' characters
@@ -280,30 +307,30 @@ function handleFiveDayStatus(cityName) {
 
             // Create 5 elements and set their content
             // Create 5 elements and set their content
-    var days = [day1, day2, day3, day4, day5];
-    var forecastContainer = document.querySelector(".boxes");
-    forecastContainer.innerHTML = ""; // Clear the current content of the "boxes" element
+            var days = [day1, day2, day3, day4, day5];
+            var forecastContainer = document.querySelector(".boxes");
+            forecastContainer.innerHTML = ""; // Clear the current content of the "boxes" element
 
-    var dayElements = ["day1", "day2", "day3", "day4", "day5"];
-    dayElements.forEach((dayElementClass, index) => {
-        var dayElement = document.createElement("div");
-        dayElement.className = dayElementClass;
+            var dayElements = ["day1", "day2", "day3", "day4", "day5"];
+            dayElements.forEach((dayElementClass, index) => {
+                var dayElement = document.createElement("div");
+                dayElement.className = dayElementClass;
 
-        var dayData = days[index];
-        dayData.forEach(data => {
-            var dataElement = document.createElement("div");
-            dataElement.textContent = data;
-            dayElement.appendChild(dataElement);
+                var dayData = days[index];
+                dayData.forEach(data => {
+                    var dataElement = document.createElement("div");
+                    dataElement.textContent = data;
+                    dayElement.appendChild(dataElement);
 
-            // Add a line break after each data item except the last one
-            if (dayData.indexOf(data) !== dayData.length - 1) {
-                dayElement.appendChild(document.createElement("br"));
-            }
-        });
+                    // Add a line break after each data item except the last one
+                    if (dayData.indexOf(data) !== dayData.length - 1) {
+                        dayElement.appendChild(document.createElement("br"));
+                    }
+                });
 
-        forecastContainer.appendChild(dayElement);
-    });
-})
+                forecastContainer.appendChild(dayElement);
+            });
+        })
         .catch(error => {
             console.log('error', error);
             // If there's an error fetching forecast data, display an error message

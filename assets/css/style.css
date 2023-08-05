@@ -72,6 +72,15 @@ header {
     margin: 1% 0% 0% 2%;
     padding: 1% 0% 0% 2%;
     border: solid black 1px;
+    background-image: url('./assets/images/Windy.jpeg');
+    background-image: url('./assets/images/Sunny.jpeg');
+    background-image: url('./assets/images/Cloudy.jpeg');
+    background-image: url('./assets/images/Rainy.jpeg');
+    background-image: url('./assets/images/Snowy.jpeg');
+    background-image: url('./assets/images/Smoky.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right; /* Display the image all the way to the right */
 }
 
 /* Add these new styles for the five-day forecast boxes */
