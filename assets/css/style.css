@@ -84,7 +84,8 @@ header {
 /* Style for the container holding the "5-Day Forecast" message */
 .fiveDayStatusContainer {
     text-align: center; /* Center the "5-Day Forecast" message */
-    margin-bottom: 20px; /* Add some space between the message and the forecast boxes */
+    padding: 15px 0px 15px 30px;
+    height: 30px;
 }
 
 .forecastContainer {
@@ -107,6 +108,7 @@ header {
   /* Style for each individual forecast box */
   .forecastContainer > div {
     flex: 0 0 calc(20% - 20px); /* Adjust the width of the forecast boxes as needed */
+    font-size: small;
     margin: 5px;
     padding: 10px;
     border: 1px solid #ccc;
