@@ -270,7 +270,7 @@ function handleFiveDayStatus(cityName) {
 
             var day1 = [today.add(1, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[0][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[0][0] + "%"];
 
-            var day2 = [today.add(2, 'day').format('MM/DD/YYYY'), "Temp (Hi/Lo): " + ((tempHighArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[1][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[1][0] + "%"];
+            var day2 = [today.add(2, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[1][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[1][0] + "%"];
 
             var day3 = [today.add(3, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[2][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[2][0] + "%"];
 
@@ -279,25 +279,31 @@ function handleFiveDayStatus(cityName) {
             var day5 = [today.add(5, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[4][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[4][0] + "%"];
 
             // Create 5 elements and set their content
-            var days = [day1, day2, day3, day4, day5];
-            var forecastContainer = document.querySelector(".forecastContainer");
-            var dayElements = forecastContainer.querySelectorAll(".day1, .day2, .day3, .day4, .day5");
-            dayElements.forEach((dayElement, index) => {
-                dayElement.innerHTML = ""; // Clear the current content of the dayElement
+            // Create 5 elements and set their content
+    var days = [day1, day2, day3, day4, day5];
+    var forecastContainer = document.querySelector(".boxes");
+    forecastContainer.innerHTML = ""; // Clear the current content of the "boxes" element
 
-                var dayData = days[index];
-                dayData.forEach(data => {
-                    var dataElement = document.createElement("div");
-                    dataElement.textContent = data;
-                    dayElement.appendChild(dataElement);
+    var dayElements = ["day1", "day2", "day3", "day4", "day5"];
+    dayElements.forEach((dayElementClass, index) => {
+        var dayElement = document.createElement("div");
+        dayElement.className = dayElementClass;
 
-                    // Add a line break after each data item except the last one
-                    if (dayData.indexOf(data) !== dayData.length - 1) {
-                        dayElement.appendChild(document.createElement("br"));
-                    }
-                });
-            });
-        })
+        var dayData = days[index];
+        dayData.forEach(data => {
+            var dataElement = document.createElement("div");
+            dataElement.textContent = data;
+            dayElement.appendChild(dataElement);
+
+            // Add a line break after each data item except the last one
+            if (dayData.indexOf(data) !== dayData.length - 1) {
+                dayElement.appendChild(document.createElement("br"));
+            }
+        });
+
+        forecastContainer.appendChild(dayElement);
+    });
+})
         .catch(error => {
             console.log('error', error);
             // If there's an error fetching forecast data, display an error message
