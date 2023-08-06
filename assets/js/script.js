@@ -38,16 +38,18 @@ function lookUp() {
             if (result.weather[0].main === 'Clear') {
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Sunny.jpeg')";
             } else if (result.weather[0].main === 'Clouds') {
+                currentStatusElement.style = "color: white";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Cloudy.jpeg')";
             } else if (result.weather[0].main === 'Rain') {
+                currentStatusElement.style = "color: gray";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Rainy.jpeg')";
             } else if (result.weather[0].main === 'Snow') {
+                currentStatusElement.style = "color: white";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Snowy.jpeg')";
             } else if (result.weather[0].main === 'Wind') {
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Windy.jpeg')";
-            } else if (result.weather[0].main === 'Smoke') {
-                currentStatusElement.style.backgroundImage = "url('./assets/images/Smoky.jpeg')";
-            }
+            } else currentStatusElement.style.backgroundImage = "url('./assets/images/Smoky.jpeg')";
+            
 
             // Create an h1 element
             var h1Element = document.createElement("h1");
