@@ -24,16 +24,8 @@ function lookUp() {
         })
         .then(result => {
 
-            // if (temperature > 293) { // For example, change the background color if the temperature is above 20 degrees Celsius (293 Kelvin)
-            //     currentStatusElement.style.backgroundColor = "yellow";
-            // } else {
-            //     currentStatusElement.style.backgroundColor = "lightblue";
-            // }
-
             // Get the .currentStatus element
             var currentStatusElement = document.querySelector(".currentStatus");
-
-            console.log(result.weather[0].main) // Debuggin
 
             if (result.weather[0].main === 'Clear') {
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Sunny.jpeg')";
@@ -49,7 +41,7 @@ function lookUp() {
             } else if (result.weather[0].main === 'Wind') {
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Windy.jpeg')";
             } else currentStatusElement.style.backgroundImage = "url('./assets/images/Smoky.jpeg')";
-            
+
 
             // Create an h1 element
             var h1Element = document.createElement("h1");
@@ -205,8 +197,6 @@ function handleFiveDayStatus(cityName) {
             for (let i = 0; i < result.list.length; i++) {
                 const element = result.list[i];
 
-                console.log(element.weather[0].main) // Debuggind
-
                 var originalString = element.dt_txt;
                 // Split the string by the '-' and ' ' characters
                 var parts = originalString.split(/-|\s/);
@@ -251,6 +241,41 @@ function handleFiveDayStatus(cityName) {
                     humidityArrays[chunkIndex] = []; // Initialize the chunk array if it doesn't exist
                 }
                 humidityArrays[chunkIndex].push(element.main.humidity);
+
+                var weather = element.weather[0].main;
+                var emoji;
+
+                switch (weather) {
+                    case 'Clouds':
+                        emoji = '🌥';
+                        break;
+                    case 'Rain':
+                        emoji = '🌧';
+                        break;
+                    case 'Clear':
+                        emoji = '😎';
+                        break;
+                    case 'Snow':
+                        emoji = '⛄️';
+                        break;
+                    case 'Fog':
+                        emoji = '😶‍🌫️';
+                        break;
+                    case 'Wind':
+                        emoji = '💨';
+                        break;
+                    case 'Smoke':
+                        emoji = '🔥💨';
+                        break;
+                    default:
+                        emoji = undefined; // Default value if none of the cases match
+                }
+
+                var hourString = element.dt_txt;
+                var hour = hourString.charAt(11) + hourString.charAt(12)
+                if (hour === '15') {
+                    console.log(emoji);
+                }
             }
 
             // Sort each chunk in the tempHighArrays array in descending order
