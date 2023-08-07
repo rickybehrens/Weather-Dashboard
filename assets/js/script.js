@@ -28,6 +28,7 @@ function lookUp() {
             var currentStatusElement = document.querySelector(".currentStatus");
 
             if (result.weather[0].main === 'Clear') {
+                currentStatusElement.style = "color: black";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Sunny.jpeg')";
             } else if (result.weather[0].main === 'Clouds') {
                 currentStatusElement.style = "color: white";
@@ -177,6 +178,7 @@ function handleFiveDayStatus(cityName) {
     var tempLowArrays = [];
     var windSpeedArrays = [];
     var humidityArrays = [];
+    var emojiArray = [];
 
     var requestOptionsForecast = {
         method: 'GET',
@@ -193,6 +195,7 @@ function handleFiveDayStatus(cityName) {
             return response.json();
         })
         .then(result => {
+            var emoji = [];
 
             for (let i = 0; i < result.list.length; i++) {
                 const element = result.list[i];
@@ -242,40 +245,46 @@ function handleFiveDayStatus(cityName) {
                 }
                 humidityArrays[chunkIndex].push(element.main.humidity);
 
-                var weather = element.weather[0].main;
-                var emoji;
-
-                switch (weather) {
-                    case 'Clouds':
-                        emoji = '🌥';
-                        break;
-                    case 'Rain':
-                        emoji = '🌧';
-                        break;
-                    case 'Clear':
-                        emoji = '😎';
-                        break;
-                    case 'Snow':
-                        emoji = '⛄️';
-                        break;
-                    case 'Fog':
-                        emoji = '😶‍🌫️';
-                        break;
-                    case 'Wind':
-                        emoji = '💨';
-                        break;
-                    case 'Smoke':
-                        emoji = '🔥💨';
-                        break;
-                    default:
-                        emoji = undefined; // Default value if none of the cases match
-                }
-
                 var hourString = element.dt_txt;
                 var hour = hourString.charAt(11) + hourString.charAt(12)
                 if (hour === '15') {
-                    console.log(emoji);
+                    var weather = element.weather[0].main;
+                    var emoji;
+
+                    switch (weather) {
+                        case 'Clouds':
+                            emoji = '🌥';
+                            break;
+                        case 'Rain':
+                            emoji = '🌧';
+                            break;
+                        case 'Clear':
+                            emoji = '😎';
+                            break;
+                        case 'Snow':
+                            emoji = '⛄️';
+                            break;
+                        case 'Fog':
+                            emoji = '😶‍🌫️';
+                            break;
+                        case 'Wind':
+                            emoji = '💨';
+                            break;
+                        case 'Smoke':
+                            emoji = '🔥💨';
+                            break;
+                        default:
+                            emoji = undefined; // Default value if none of the cases match
+                    }
+
+                    // Store the emoji in the emojiArray for the corresponding day
+                    var dayIndex = Math.floor(i / 8);
+                    if (!emojiArray[dayIndex]) {
+                        emojiArray[dayIndex] = []; // Initialize the array for the day if it doesn't exist
+                    }
+                    emojiArray[dayIndex].push(emoji);
                 }
+
             }
 
             // Sort each chunk in the tempHighArrays array in descending order
@@ -322,19 +331,21 @@ function handleFiveDayStatus(cityName) {
                 }
             });
 
-            var day1 = [today.add(1, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[0][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[0][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[0][0] + "%"];
+            // Create the day arrays and set their content with emojis
+            var days = [];
+            for (let i = 0; i < 5; i++) {
+                var day = today.add(i + 1, 'day').format('MM/DD/YYYY');
+                var emojis = emojiArray[i] || []; // Get the emojis for the day or an empty array if not available
+                var tempHigh = (tempHighArrays[i]?.[0] - 273.15) * 9 / 5 + 32;
+                var tempLow = (tempLowArrays[i]?.[0] - 273.15) * 9 / 5 + 32;
+                var windSpeed = windSpeedArrays[i]?.[0] * 2.237;
+                var humidity = humidityArrays[i]?.[0];
 
-            var day2 = [today.add(2, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[1][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[1][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[1][0] + "%"];
+                // Create the dayX array for each day
+                var dayX = [day, ...emojis, "Temp (Hi): " + tempHigh.toFixed(0) + "° F", "Temp (Lo): " + tempLow.toFixed(0) + "° F", "Wind: " + windSpeed.toFixed(0) + " MPH", "Humidity: " + humidity + "%"];
+                days.push(dayX);
+            }
 
-            var day3 = [today.add(3, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[2][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[2][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[2][0] + "%"];
-
-            var day4 = [today.add(4, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[3][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[3][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[3][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[3][0] + "%"];
-
-            var day5 = [today.add(5, 'day').format('MM/DD/YYYY'), "Temp (Hi): " + ((tempHighArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Temp (Lo): ' + ((tempLowArrays[4][0] - 273.15) * 9 / 5 + 32).toFixed(0) + "° F", 'Wind: ' + (windSpeedArrays[4][0] * 2.237).toFixed(0) + " MPH", 'Humidity: ' + humidityArrays[4][0] + "%"];
-
-            // Create 5 elements and set their content
-            // Create 5 elements and set their content
-            var days = [day1, day2, day3, day4, day5];
             var forecastContainer = document.querySelector(".boxes");
             forecastContainer.innerHTML = ""; // Clear the current content of the "boxes" element
 
@@ -342,6 +353,8 @@ function handleFiveDayStatus(cityName) {
             dayElements.forEach((dayElementClass, index) => {
                 var dayElement = document.createElement("div");
                 dayElement.className = dayElementClass;
+                dayElement.style.backgroundColor = "#4a4a4a"; // Set the background color
+                dayElement.style.color = "white"; // Set the text color
 
                 var dayData = days[index];
                 dayData.forEach(data => {
