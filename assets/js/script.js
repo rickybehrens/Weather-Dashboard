@@ -2,11 +2,42 @@
 var today = dayjs();
 
 // Function to look up weather data
+
+// Function to be executed when the page loads
+window.onload = function () {
+    // Get the message container element
+    var messageContainer = document.querySelector(".message-container");
+
+    // Calculate the width of the message container
+    var messageContainerWidth = messageContainer.offsetWidth;
+
+    // Set the negative value of translateX for keyframes animation
+    var translateXValue = `calc(-${messageContainerWidth}px - 100px)`;
+
+    // Update the animation with the calculated translateX value
+    var styleSheet = document.styleSheets[0];
+    var keyframesRule = styleSheet.cssRules[styleSheet.cssRules.length - 1];
+    keyframesRule.deleteRule("100%");
+    keyframesRule.appendRule(`100% { transform: translateX(${translateXValue}); }`);
+};
+
 function lookUp() {
     var requestOptions = {
         method: 'GET',
         redirect: 'follow'
     };
+
+
+    // Add an event listener to the search button to handle the city search
+    var searchButton = document.querySelector(".btn");
+    searchButton.addEventListener("click", function () {
+        var cityInputField = document.getElementById("citySearch");
+        var cityName = cityInputField.value.trim(); // Trim any leading/trailing spaces from the input
+        var formattedCityName = capitalizeCity(cityName); // Format the city name
+        var cityName = cityInputField.value.trim(); // Trim any leading/trailing spaces from the input
+        var formattedCityName = capitalizeCity(cityName); // Format the city name
+        lookUp();
+    });
 
     var cityName = document.getElementById('citySearch').value;
     var currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e';
@@ -28,13 +59,13 @@ function lookUp() {
             var currentStatusElement = document.querySelector(".currentStatus");
 
             if (result.weather[0].main === 'Clear') {
-                currentStatusElement.style = "color: black";
+                currentStatusElement.style = "color: white";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Sunny.jpeg')";
             } else if (result.weather[0].main === 'Clouds') {
                 currentStatusElement.style = "color: white";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Cloudy.jpeg')";
             } else if (result.weather[0].main === 'Rain') {
-                currentStatusElement.style = "color: gray";
+                currentStatusElement.style = "color: white";
                 currentStatusElement.style.backgroundImage = "url('./assets/images/Rainy.jpeg')";
             } else if (result.weather[0].main === 'Snow') {
                 currentStatusElement.style = "color: white";
@@ -139,6 +170,15 @@ function lookUp() {
 
 }
 
+// Define the function to capitalize the city name
+function capitalizeCity(city) {
+    var words = city.split(" ");
+    var capitalizedWords = words.map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+    return capitalizedWords.join(" ");
+}
+
 // Function to store city name in localStorage
 function storeCity(cityName) {
     // Check if the city is not found before storing it locally
@@ -146,18 +186,21 @@ function storeCity(cityName) {
         return;
     }
 
+    // Capitalize the cityName
+    var formattedCityName = capitalizeCity(cityName);
+
     // Get the existing cities from localStorage or initialize an empty array
     var cities = JSON.parse(localStorage.getItem("cities")) || [];
 
-    // Check if the cityName already exists in the cities array
-    var index = cities.indexOf(cityName);
+    // Check if the formattedCityName already exists in the cities array
+    var index = cities.indexOf(formattedCityName);
     if (index !== -1) {
-        // If cityName exists, remove the older entry
+        // If formattedCityName exists, remove the older entry
         cities.splice(index, 1);
     }
 
     // Add the new city to the cities array
-    cities.push(cityName);
+    cities.push(formattedCityName);
 
     // Ensure that the cities array only stores the last 8 cities
     if (cities.length > 8) {
@@ -198,7 +241,7 @@ function handleFiveDayStatus(cityName) {
             var emoji = [];
 
             for (let i = 0; i < result.list.length; i++) {
-                const element = result.list[i];
+                var element = result.list[i];
 
                 var originalString = element.dt_txt;
                 // Split the string by the '-' and ' ' characters
@@ -405,12 +448,6 @@ function displayHistory(cities) {
 
 // Wait for the DOM content to be loaded before running the JavaScript
 document.addEventListener("DOMContentLoaded", function () {
-
-    // Define DOM elements
-    var citySearchInput = document.getElementById('citySearch');
-    var currentStatusElement = document.querySelector(".currentStatus");
-    var historyElement = document.querySelector(".history");
-    var fiveDayStatusElement = document.querySelector(".fiveDayStatusContainer");
 
     document.querySelector('.btn').addEventListener('click', lookUp);
 
