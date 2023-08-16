@@ -40,7 +40,7 @@ function lookUp() {
     });
 
     var cityName = document.getElementById('citySearch').value;
-    var currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e';
+    // var currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b678393f509aecf946ac94ef01ec609e';
 
     fetch(currentUrl, requestOptions)
         .then(response => {
